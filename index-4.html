@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DAC Chain Airdrop Allocation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --accent: #aa69ff;
+      --accent-2: #6d3dff;
+      --cyan: #6ee7ff;
+      --green: #22c55e;
+      --muted: #8b90a8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #fff;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(170, 105, 255, 0.28), transparent 42%),
+        radial-gradient(circle at 100% 80%, rgba(0, 180, 255, 0.08), transparent 36%),
+        linear-gradient(180deg, #07050f, #04030a);
+      display: flex;
+      justify-content: center;
+      padding: 44px 18px 32px;
+    }
+
+    .wrap { width: 100%; max-width: 540px; }
+
+    .brand { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px; }
+    .brand-logo { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(170,105,255,.45); }
+
+    .pill {
+      background: linear-gradient(135deg, #aa69ff, #5b2bff);
+      color: #fff;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 1px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 850;
+      letter-spacing: -1.1px;
+      line-height: 1.2;
+    }
+
+    .madeby {
+      text-align: center;
+      margin-top: 10px;
+      color: #c084ff;
+      font-size: 13px;
+      font-weight: 850;
+      letter-spacing: 3px;
+    }
+
+    .sub {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .search {
+      margin-top: 28px;
+      background: rgba(16, 12, 28, 0.94);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 16px;
+      padding: 7px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.3);
+    }
+
+    .search:focus-within {
+      border-color: rgba(170,105,255,.75);
+      box-shadow: 0 0 0 3px rgba(170,105,255,.12), 0 15px 40px rgba(0,0,0,.3);
+    }
+
+    input {
+      width: 100%;
+      height: 52px;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 0 15px;
+      font-family: inherit;
+    }
+
+    input::placeholder { color: #5c6178; }
+
+    .btn {
+      width: 100%;
+      height: 50px;
+      margin-top: 16px;
+      border: 0;
+      border-radius: 13px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      background: linear-gradient(135deg, #c084ff, #5b2bff);
+      box-shadow: 0 8px 25px rgba(170,105,255,.28);
+    }
+
+    .error {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      text-align: center;
+      color: #ff737b;
+      background: rgba(255,55,65,.07);
+      border: 1px solid rgba(255,55,65,.18);
+      font-size: 13px;
+    }
+
+    .card {
+      display: none;
+      margin-top: 22px;
+      position: relative;
+      overflow: hidden;
+      padding: 34px 24px 26px;
+      border-radius: 28px;
+      background: linear-gradient(145deg, rgba(28, 18, 48, .96), rgba(8, 6, 16, .98));
+      border: 1px solid rgba(255,255,255,.1);
+      box-shadow: 0 30px 90px rgba(0,0,0,.58);
+      animation: in .45s ease;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      width: 330px; height: 330px;
+      top: -220px; left: 50%;
+      transform: translateX(-50%);
+      background: #aa69ff;
+      filter: blur(120px);
+      opacity: .22;
+      pointer-events: none;
+    }
+
+    .inner { position: relative; z-index: 2; text-align: center; }
+
+    .badge-row {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .wallet-badge {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #aa69ff, #3ee0ff);
+      box-shadow: 0 0 0 6px rgba(170,105,255,.08), 0 0 36px rgba(170,105,255,.28);
+    }
+
+    .wallet-badge span {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: #120c1c;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      letter-spacing: 1px;
+      font-size: 13px;
+    }
+
+    .addr {
+      margin-top: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      word-break: break-all;
+      color: #e8e4ff;
+    }
+
+    .role {
+      margin-top: 6px;
+      color: #8a90a8;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .ok {
+      margin-top: 22px;
+      padding: 15px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, rgba(34,197,94,.15), rgba(34,197,94,.04));
+      border: 1px solid rgba(34,197,94,.35);
+      color: #31e875;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .check {
+      width: 21px; height: 21px;
+      border-radius: 50%;
+      background: #22c55e;
+      color: #06100a;
+      font-size: 13px;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px;
+      padding: 12px 8px;
+    }
+
+    .stat b { display: block; font-size: 16px; margin-top: 4px; }
+    .stat span { color: #8a90a8; font-size: 11px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; }
+
+    .label {
+      margin-top: 26px;
+      color: #777f8d;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .amt {
+      margin-top: 10px;
+      font-size: 52px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -2px;
+      background: linear-gradient(100deg, #fff, #eadbff 50%, #aa69ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tok {
+      margin-top: 10px;
+      color: #c084ff;
+      font-size: 20px;
+      font-weight: 850;
+      letter-spacing: 1px;
+    }
+
+    .line {
+      height: 1px;
+      margin: 24px 0 16px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+    }
+
+    .note {
+      color: #6b7188;
+      font-size: 10px;
+      line-height: 1.55;
+    }
+
+    footer {
+      margin-top: 22px;
+      text-align: center;
+      color: #707987;
+      font-size: 12px;
+    }
+
+    .x-row {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .x-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 750;
+      font-size: 14px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 999px;
+      padding: 8px 14px 8px 8px;
+    }
+
+    .x-link img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #111;
+    }
+
+    .x-mark {
+      font-weight: 900;
+      opacity: .7;
+    }
+
+    @keyframes in {
+      from { opacity: 0; transform: translateY(14px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (max-width: 500px) {
+      h1 { font-size: 24px; }
+      .amt { font-size: 42px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">
+      <img class="brand-logo" src="logo.png" alt="9X VENOM" />
+      <span class="pill">DAC Chain</span>
+    </div>
+    <h1>DAC Chain Airdrop Allocation</h1>
+    <p class="madeby">MADE BY VENOM</p>
+    <p class="sub">Enter a wallet address to check mock $DACC allocation</p>
+
+    <div class="search">
+      <input id="wallet" type="text" placeholder="0x..." autocomplete="off" spellcheck="false" />
+    </div>
+    <button class="btn" id="searchBtn" type="button">Check allocation</button>
+    <div class="error" id="error"></div>
+
+    <section class="card" id="card">
+      <div class="inner">
+        <div class="badge-row">
+          <div class="wallet-badge"><span>DAC</span></div>
+        </div>
+        <div class="addr" id="shownAddr">0x</div>
+        <div class="role">Wallet user · mock eligibility</div>
+        <div class="ok"><span class="check">✓</span> Eligible on this mock checker</div>
+        <div class="stats">
+          <div class="stat"><span>QE score</span><b id="qe">0</b></div>
+          <div class="stat"><span>Tier</span><b id="tier">—</b></div>
+        </div>
+        <div class="label">You have been allocated</div>
+        <div class="amt" id="amount">0</div>
+        <div class="tok">DACC</div>
+        <div class="line"></div>
+        <p class="note">Made By VENOM · Not official DAC Chain allocation. Fun mock checker only. Numbers are generated from the wallet address. No wallet connect. Never enter a seed phrase or private key.</p>
+      </div>
+    </section>
+
+    <div class="x-row">
+      <a class="x-link" id="xLink" href="https://x.com/9xvenom" target="_blank" rel="noopener">
+        <img id="xAvatar" alt="9X VENOM" src="logo.png" />
+        <span>
+          <b style="display:block;font-size:13px;letter-spacing:.3px">Made By VENOM</b>
+          <span class="x-mark" style="font-size:12px;font-weight:700">𝕏 @9xvenom</span>
+        </span>
+      </a>
+    </div>
+    <footer>Unofficial fan tool · not affiliated with DAC Chain</footer>
+  </div>
+
+  <script>
+    function hashStr(s) {
+      let h = 0;
+      for (let i = 0; i < s.length; i++) {
+        h = ((h << 5) - h) + s.charCodeAt(i);
+        h |= 0;
+      }
+      return Math.abs(h);
+    }
+
+    function isAddress(v) {
+      return /^0x[a-fA-F0-9]{40}$/.test(v);
+    }
+
+    function shortAddr(a) {
+      return a.slice(0, 6) + "…" + a.slice(-4);
+    }
+
+    function tierFrom(n) {
+      if (n >= 40000) return "Quantum";
+      if (n >= 25000) return "Gold";
+      if (n >= 12000) return "Silver";
+      return "Standard";
+    }
+
+    function check() {
+      const error = document.getElementById("error");
+      const card = document.getElementById("card");
+      let wallet = document.getElementById("wallet").value.trim();
+
+      if (!wallet) {
+        card.style.display = "none";
+        error.textContent = "Please enter a wallet address.";
+        error.style.display = "block";
+        return;
+      }
+
+      if (!isAddress(wallet)) {
+        card.style.display = "none";
+        error.textContent = "Enter a valid EVM address (0x + 40 hex characters).";
+        error.style.display = "block";
+        return;
+      }
+
+      wallet = "0x" + wallet.slice(2).toLowerCase();
+      const h = hashStr(wallet);
+      const min = 2500;
+      const max = 75000;
+      let allocation = min + (h % (max - min + 1));
+      allocation = Math.round(allocation / 250) * 250;
+      const qe = 120 + (h % 9800);
+
+      document.getElementById("shownAddr").textContent = shortAddr(wallet);
+      document.getElementById("amount").textContent = allocation.toLocaleString();
+      document.getElementById("qe").textContent = qe.toLocaleString();
+      document.getElementById("tier").textContent = tierFrom(allocation);
+      error.style.display = "none";
+      card.style.display = "block";
+    }
+
+    document.getElementById("searchBtn").addEventListener("click", check);
+    document.getElementById("wallet").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") check();
+    });
+  </script>
+</body>
+</html>
